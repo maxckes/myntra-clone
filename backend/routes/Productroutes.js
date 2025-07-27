@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose'); // ✅ ADDED: Import mongoose for ObjectId validation
 const router = express.Router();
 const Product = require('../models/Product');
 const Category = require('../models/Category');
@@ -184,7 +185,7 @@ router.get('/category/:categoryId', async (req, res) => {
 
     // ✅ Find category first (support both ObjectId and name)
     let category;
-    if (categoryId.match(/^[0-9a-fA-F]{24}$/)) {
+    if (mongoose.Types.ObjectId.isValid(categoryId)) {
       category = await Category.findById(categoryId);
     } else {
       category = await Category.findOne({ 
@@ -309,7 +310,7 @@ router.get('/:id/recommendations', async (req, res) => {
     const { id } = req.params;
     const { limit = 6 } = req.query;
 
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
         message: 'Invalid product ID format'
@@ -397,7 +398,7 @@ router.get('/', async (req, res) => {
 
     // Category filter - FIXED: Use categoryId
     if (category) {
-      if (category.match(/^[0-9a-fA-F]{24}$/)) {
+      if (mongoose.Types.ObjectId.isValid(category)) {
         filterConditions.categoryId = category;
       } else {
         // Find category by name first
@@ -510,7 +511,7 @@ router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
         message: 'Invalid product ID format'

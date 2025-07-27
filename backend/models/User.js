@@ -22,6 +22,21 @@ const UserSchema = new mongoose.Schema(
       required: true,
       minlength: 6,
     },
+    // ✅ ADDED: Missing fields that seed data expects
+    phone: {
+      type: String,
+      trim: true,
+      maxlength: 15,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    role: {
+      type: String,
+      enum: ['customer', 'admin', 'seller'],
+      default: 'customer',
+    },
     // Add these fields for password reset
     resetPasswordToken: {
       type: String,
@@ -47,5 +62,6 @@ const UserSchema = new mongoose.Schema(
 // Add index for better performance
 UserSchema.index({ email: 1 });
 UserSchema.index({ resetPasswordToken: 1 });
+UserSchema.index({ role: 1 });
 
 module.exports = mongoose.model("User", UserSchema);

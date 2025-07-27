@@ -1,5 +1,6 @@
 const Product = require('../models/Product');
 const Category = require('../models/Category');
+const mongoose = require('mongoose');
 
 // ============================================================================
 // ADVANCED SEARCH CONTROLLER WITH PROFESSIONAL ALGORITHMS
@@ -68,7 +69,8 @@ class SearchController {
 
       // Add category filter
       if (filters.category) {
-        if (filters.category.match(/^[0-9a-fA-F]{24}$/)) {
+        // ✅ FIXED: Better category matching with ObjectId validation
+        if (mongoose.Types.ObjectId.isValid(filters.category)) {
           searchConditions.categoryId = filters.category;
         } else {
           // Find category by name first
@@ -368,7 +370,8 @@ class SearchController {
       
       // Add category filter if specified
       if (category) {
-        if (category.match(/^[0-9a-fA-F]{24}$/)) {
+        // ✅ FIXED: Better ObjectId validation
+        if (mongoose.Types.ObjectId.isValid(category)) {
           matchConditions.categoryId = category;
         } else {
           const categoryDoc = await Category.findOne({ 
@@ -510,7 +513,8 @@ class SearchController {
 
       const matchConditions = { isActive: true };
       if (category) {
-        if (category.match(/^[0-9a-fA-F]{24}$/)) {
+        // ✅ FIXED: Better ObjectId validation
+        if (mongoose.Types.ObjectId.isValid(category)) {
           matchConditions.categoryId = category;
         } else {
           const categoryDoc = await Category.findOne({ 
@@ -556,7 +560,8 @@ class SearchController {
 
       const matchConditions = { isActive: true, isFeatured: true };
       if (category) {
-        if (category.match(/^[0-9a-fA-F]{24}$/)) {
+        // ✅ FIXED: Better ObjectId validation
+        if (mongoose.Types.ObjectId.isValid(category)) {
           matchConditions.categoryId = category;
         } else {
           const categoryDoc = await Category.findOne({ 

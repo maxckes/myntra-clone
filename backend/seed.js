@@ -18,10 +18,30 @@ const Wishlist = require('./models/Wishlist');
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce');
+    // ✅ ENHANCED: Better MongoDB connection with error details
+    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce';
+    console.log('🔗 Attempting to connect to MongoDB:', mongoUri);
+    
+    await mongoose.connect(mongoUri);
     console.log('✅ Connected to MongoDB for seeding');
+    console.log('📊 Database Name:', mongoose.connection.db.databaseName);
+    console.log('🏠 Host:', mongoose.connection.host);
+    console.log('⚡ Port:', mongoose.connection.port);
   } catch (error) {
-    console.error('❌ Database connection error:', error);
+    console.error('❌ Database connection error:', error.message);
+    
+    // ✅ ENHANCED: Provide helpful error messages
+    if (error.code === 'ECONNREFUSED') {
+      console.log('💡 Suggestion: Make sure MongoDB is running on your system');
+      console.log('   - Install MongoDB: https://docs.mongodb.com/manual/installation/');
+      console.log('   - Start MongoDB service');
+      console.log('   - Or use MongoDB Atlas (cloud): https://www.mongodb.com/atlas');
+    } else if (error.code === 'ENOTFOUND') {
+      console.log('💡 Suggestion: Check your MongoDB connection string');
+      console.log('   - Verify the hostname and port');
+      console.log('   - Check your internet connection for cloud databases');
+    }
+    
     process.exit(1);
   }
 };
